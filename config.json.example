@@ -1,0 +1,9 @@
+{
+    "telegram": {
+        "token": "<TOKEN>"
+    },
+    "imgur": {
+        "id": "<ID>",
+        "secret": "<SECRET>"
+    }
+}
