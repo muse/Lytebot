@@ -18,10 +18,10 @@ def disable(args):
 
     for s in args.text.split(' ')[1::]:
         if s == 'enable':
-            return 'Nah'
+            return '@{} Nah'.format(user)
         command = lytebot.get_command(s)
         if not command:
-            return 'Command {} not found'.format(s)
+            return '@{} Command {} not found'.format(user, s)
 
         if command not in lytebot.disabled:
             n.append(command)
@@ -68,7 +68,6 @@ def ignore(args):
         return '@{} You can\'t do that'.format(user)
 
     for u in args.text.split(' ')[1::]:
-        u = u.replace('@', '')
         lytebot.ignore(args.chat_id, u)
         users.append(u)
 
@@ -85,7 +84,6 @@ def unignore(args):
         return '@{} You can\'t do that'.format(user)
 
     for u in args.text.split(' ')[1::]:
-        u = u.replace('@', '')
         try:
             lytebot.unignore(args.chat_id, u)
             users.append(u)

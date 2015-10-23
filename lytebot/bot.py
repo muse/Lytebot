@@ -87,6 +87,8 @@ class Bot:
         if not chat_id in self.ignored:
             self.ignored[chat_id] = []
         if not user in self.ignored[chat_id]:
+            # allow /ignore @username for convenience
+            user = user.replace('@', '')
             self.ignored[chat_id].append(user)
 
         self.save_data(self.paths['ignored'], self.ignored)
@@ -99,6 +101,7 @@ class Bot:
         :param chat_id: Chat ID
         :param user: Username to ignored
         '''
+        user = user.replace('@', '')
         self.ignored[chat_id].remove(user)
 
     def command(self, handle):

@@ -13,8 +13,8 @@ if not os.path.isdir(config_dir):
         pass
 
 try:
-    with open('{}/config.json'.format(config_dir)) as f:
+    with open(os.path.join(config_dir, 'config.json'), 'r') as f:
         config = json.load(f)
 except FileNotFoundError:
-    logging.critical('Configuration file was not found. Does \'{}/config.json\' exist?'.format(config_dir))
+    logging.critical('Configuration file was not found. Does \'{}\' exist?'.format(os.path.join(config_dir, 'config.json')))
     sys.exit(1)
