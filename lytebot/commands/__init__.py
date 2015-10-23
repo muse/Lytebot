@@ -1,10 +1,13 @@
 import logging
 from lytebot.errors import CommandsDisabled
 
-try:
-    from .misc import *
-    from .imgur import *
-    from .admin import *
-    from .duckduckgo import *
-except CommandsDisabled as e:
-    logging.warning(e)
+commands = ['misc', 'duckduckgo', 'imgur', 'admin']
+
+for command in commands:
+    module = 'lytebot.commands.{}'.format(command)
+    try:
+        lib = __import__(module, globals(), locals(), ['*'])
+    except CommandsDisabled as e:
+        logging.warning(e)
+    else:
+        globals()[command] = lib
