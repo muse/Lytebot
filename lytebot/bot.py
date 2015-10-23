@@ -3,8 +3,8 @@ import re
 import sys
 import logging
 import telegram
+import json
 import lytebot
-import lytebot.models
 
 from lytebot import config, config_dir
 
@@ -21,13 +21,39 @@ logging.getLogger('').addHandler(console)
 
 class Bot:
     _last_id = None
-    ignore = {}
+    ignored = {}
     commands = {}
     disabled = []
     previous = {}
 
+    paths = {
+        'ignored': os.path.join(config_dir, 'ignored.json'),
+        'disabled': os.path.join(config_dir, 'disabled.json'),
+    }
+
     def __init__(self, prefix='/'):
         self.prefix = prefix
+
+        for n, f in self.paths.items():
+            try:
+                with open(f, 'r') as f:
+                    setattr(self.__class__, n, json.load(f))
+            except FileNotFoundError:
+                pass
+            except Exception as e:
+                logging.warning('Couldn\'t load {} data: {}'.format(n, e))
+            else:
+                logging.info('Loaded {} data'.format(n))
+
+    def disable(self, command):
+        '''Disables a command in _all_ chats'''
+        self.disabled.append(command)
+        self.save_data(self.paths['disabled'], self.disabled)
+
+    def enable(self, command):
+        '''Enables a command in _all_ chats'''
+        self.disabled.remove(command)
+        self.save_data(self.paths['disabled'], self.disabled)
 
     def _set_previous(self, func, args):
         '''
@@ -38,17 +64,42 @@ class Bot:
         '''
         self.previous[args.chat_id] = {'func': func, 'args': args}
 
-    def set_ignore(self, chat_id, user):
+    def save_data(self, file, data):
         '''
-        Ignore a user in a chat
+        Saves data to file to persist data even on shutdown
+
+        :param file: File to write to
+        :param data: Data to write to file
+        '''
+        try:
+            with open(file, 'w') as f:
+                f.write(json.dumps(data))
+        except Exception as e:
+            logging.warning('Failed to save data: {}'.format(e))
+
+    def ignore(self, chat_id, user):
+        '''
+        Ignores a user in a chat
 
         :param chat_id: Chat ID
-        :param user: Username to ignore
+        :param user: Username to ignored
         '''
-        if not chat_id in self.ignore:
-            self.ignore[chat_id] = []
-        if not user in self.ignore[chat_id]:
-            self.ignore[chat_id].append(user)
+        if not chat_id in self.ignored:
+            self.ignored[chat_id] = []
+        if not user in self.ignored[chat_id]:
+            self.ignored[chat_id].append(user)
+
+        self.save_data(self.paths['ignored'], self.ignored)
+
+
+    def unignore(self, chat_id, user):
+        '''
+        Unignores a user in a chat
+
+        :param chat_id: Chat ID
+        :param user: Username to ignored
+        '''
+        self.ignored[chat_id].remove(user)
 
     def command(self, handle):
         '''
@@ -103,15 +154,16 @@ class Bot:
                     if not update.message['text']:
                         continue
 
-                    if update.message.chat_id in self.ignore and \
-                       update.message.from_user.username in self.ignore[update.message.chat_id]:
+                    # Is the user who sent the message ignored?
+                    if update.message.chat_id in self.ignored and \
+                       update.message.from_user.username in self.ignored[update.message.chat_id]:
                         continue
 
                     message = update.message.text[1::]
                     prefix = update.message.text[0]
                     command = self.get_command(message)
 
-                    if command and prefix == self.prefix and command not in self.disabled:
+                    if command and prefix == self.prefix and command.__name__ not in self.disabled:
                         bot.sendMessage(
                             chat_id=update.message.chat_id,
                             text=command(update.message)

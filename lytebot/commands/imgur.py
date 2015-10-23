@@ -2,21 +2,22 @@ import logging
 import random
 import re
 import imgurpython as imgur
+from lytebot.errors import CommandsDisabled
 from lytebot import config
 from lytebot.bot import lytebot
-
-# thanks mvdw and techwolf12
-sub_blacklist = ['traps', 'spacedicks', '^porn$', 'submissive', 'nsfw', 'gonewild',
-                 'boob', 'yiff', 'furry']
 
 try:
     imgur_client = imgur.ImgurClient(config['imgur']['id'], config['imgur']['secret'])
 except KeyError as e:
-    logging.error('Missing imgur[{}] in configuration file. Disabling imgur commands'.format(e) +
-                  ' (see config.json.example for an example)')
+    raise CommandsDisabled('Missing imgur[{}] in configuration file. Disabling imgur commands'.format(e) +
+                           ' (see config.json.example for an example)')
 except imgur.helpers.error.ImgurClientError as e:
     logging.error(e)
-    logging.warning('Imgur commands won\'t work. This should resolve itself over time')
+    raise CommandsDisabled('Imgur commands won\'t work. This should resolve itself over time')
+
+# thanks mvdw and techwolf12
+sub_blacklist = ['traps', 'spacedicks', '^porn$', 'submissive', 'nsfw', 'gonewild',
+                 'boob', 'yiff', 'furry']
 
 @lytebot.command('r')
 def r(args):
