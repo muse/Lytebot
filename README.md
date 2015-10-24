@@ -11,7 +11,7 @@ DuckDuckGo's [!bangs](https://duckduckgo.com/bang)
 
 ## Building
 ```bash
-$ git clone https://github.com/Imakethings/Lytebot
+$ git clone https://github.com/muse/Lytebot
 $ cd Lytebot
 $ pip install -r requirements.txt
 $ sudo ./setup.py install
@@ -19,4 +19,4 @@ $ sudo ./setup.py install
 
 This will put the executable `lytebot` in your path. To use the bot, you need
 to put the example configuration file in `~/.lytebot/config.json` with your Imgur
-id and secret and Telegram token.
+ID, Imgur secret and Telegram token.
