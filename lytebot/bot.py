@@ -5,6 +5,7 @@ import logging
 import telegram
 import json
 import lytebot
+import threading
 
 from lytebot import config, config_dir
 
@@ -19,8 +20,9 @@ console.setFormatter(logging.Formatter(log_format))
 
 logging.getLogger('').addHandler(console)
 
-class Bot:
+class LyteBot:
     _last_id = None
+    _bot = telegram.Bot(token=config['telegram']['token'])
     ignored = {}
     commands = {}
     disabled = []
@@ -33,6 +35,8 @@ class Bot:
 
     def __init__(self, prefix='/'):
         self.prefix = prefix
+        # Disable Telegram API's logger to prevent spam
+        self._bot.logger.disabled = True
 
         for n, f in self.paths.items():
             try:
@@ -45,6 +49,42 @@ class Bot:
             else:
                 logging.info('Loaded {} data'.format(n))
 
+    def _set_previous(self, func, args):
+        '''
+        Save previous command per chat
+
+        :param func: Command function
+        :param args: Arguments given to command
+        '''
+        self.previous[args.chat_id] = {'func': func, 'args': args}
+
+    def _handle_msg(self, update):
+        '''Handles all messages sent in all chats (that the bot can see)'''
+        # Ignore stickers, pictures and other non-text messages
+        if not update.message['text']:
+            return
+
+        # Is the user who sent the message ignored?
+        if update.message.chat_id in self.ignored and \
+           update.message.from_user.username in self.ignored[update.message.chat_id]:
+            return
+
+        message = update.message.text[1::]
+        prefix = update.message.text[0]
+        command = self.get_command(message)
+
+        if command and prefix == self.prefix and command.__name__ not in self.disabled:
+            t = threading.Thread(target=self._bot.sendMessage, kwargs={
+                'chat_id': update.message.chat_id,
+                'text': command(update.message)
+            })
+            t.start()
+
+            self._last_id = update.update_id + 1
+
+            if not message.startswith('!!'):
+                self._set_previous(command, update.message)
+
     def disable(self, command):
         '''Disables a command in _all_ chats'''
         self.disabled.append(command)
@@ -54,15 +94,6 @@ class Bot:
         '''Enables a command in _all_ chats'''
         self.disabled.remove(command)
         self.save_data(self.paths['disabled'], self.disabled)
-
-    def _set_previous(self, func, args):
-        '''
-        Save previous command per chat
-
-        :param func: Command function
-        :param args: Arguments given to command
-        '''
-        self.previous[args.chat_id] = {'func': func, 'args': args}
 
     def save_data(self, file, data):
         '''
@@ -92,7 +123,6 @@ class Bot:
             self.ignored[chat_id].append(user)
 
         self.save_data(self.paths['ignored'], self.ignored)
-
 
     def unignore(self, chat_id, user):
         '''
@@ -136,15 +166,11 @@ class Bot:
 
     def run(self):
         '''Start listening for commands'''
-        bot = telegram.Bot(token=config['telegram']['token'])
-        # Disable Telegram API's logger to prevent spam
-        bot.logger.disabled = True
-
         logging.info('Started bot')
 
         # TODO: Make this not hacky with tries.
         try:
-            self._last_id = bot.getUpdates()[-1].update_id
+            self._last_id = self._bot.getUpdates()[-1].update_id
         except IndexError:
             self._last_id = None
         except telegram.error.TelegramError as e:
@@ -153,29 +179,9 @@ class Bot:
 
         try:
             while True:
-                for update in bot.getUpdates(offset=self._last_id, timeout=10):
-                    if not update.message['text']:
-                        continue
-
-                    # Is the user who sent the message ignored?
-                    if update.message.chat_id in self.ignored and \
-                       update.message.from_user.username in self.ignored[update.message.chat_id]:
-                        continue
-
-                    message = update.message.text[1::]
-                    prefix = update.message.text[0]
-                    command = self.get_command(message)
-
-                    if command and prefix == self.prefix and command.__name__ not in self.disabled:
-                        bot.sendMessage(
-                            chat_id=update.message.chat_id,
-                            text=command(update.message)
-                        )
-                        self._last_id = update.update_id + 1
-
-                        if not message.startswith('!!'):
-                            self._set_previous(command, update.message)
+                for update in self._bot.getUpdates(offset=self._last_id, timeout=10):
+                    self._handle_msg(update)
         except KeyboardInterrupt:
             logging.info('Stopped bot')
 
-lytebot = Bot()
+lytebot = LyteBot()
