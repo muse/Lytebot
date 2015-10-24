@@ -3,8 +3,8 @@ import re
 import sys
 import logging
 import telegram
-import json
 import lytebot
+import yaml
 import threading
 
 from lytebot import config, config_dir
@@ -22,26 +22,26 @@ logging.getLogger('').addHandler(console)
 
 class LyteBot:
     _last_id = None
-    _bot = telegram.Bot(token=config['telegram']['token'])
     ignored = {}
     commands = {}
     disabled = []
     previous = {}
 
     paths = {
-        'ignored': os.path.join(config_dir, 'ignored.json'),
-        'disabled': os.path.join(config_dir, 'disabled.json'),
+        'ignored': os.path.join(config_dir, 'ignored.yaml'),
+        'disabled': os.path.join(config_dir, 'disabled.yaml'),
     }
 
     def __init__(self, prefix='/'):
         self.prefix = prefix
+        self._bot = telegram.Bot(token=config['telegram']['token'])
         # Disable Telegram API's logger to prevent spam
         self._bot.logger.disabled = True
 
         for n, f in self.paths.items():
             try:
                 with open(f, 'r') as f:
-                    setattr(self.__class__, n, json.load(f))
+                    setattr(self, n, yaml.load(f.read()))
             except FileNotFoundError:
                 pass
             except Exception as e:
@@ -104,7 +104,7 @@ class LyteBot:
         '''
         try:
             with open(file, 'w') as f:
-                f.write(json.dumps(data))
+                f.write(yaml.dump(data))
         except Exception as e:
             logging.warning('Failed to save data: {}'.format(e))
 
