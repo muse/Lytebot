@@ -28,8 +28,8 @@ class LyteBot:
     previous = {}
 
     paths = {
-        'ignored': os.path.join(config_dir, 'ignored.yaml'),
-        'disabled': os.path.join(config_dir, 'disabled.yaml'),
+        'ignored': os.path.join(config_dir, 'ignored.yml'),
+        'disabled': os.path.join(config_dir, 'disabled.yml'),
     }
 
     def __init__(self, prefix='/'):
