@@ -11,7 +11,7 @@ from lytebot import config, config_dir
 
 # set up logging
 log_format = '%(asctime)s [%(levelname)-5.5s] %(message)s'
-logging.basicConfig(filename='{}/lytebot.log'.format(config_dir),
+logging.basicConfig(filename=os.path.join(config_dir, 'lytebot.log'),
                     format=log_format, level=logging.INFO)
 
 # stdout logger
@@ -166,8 +166,6 @@ class LyteBot:
 
     def run(self):
         '''Start listening for commands'''
-        logging.info('Started bot')
-
         # TODO: Make this not hacky with tries.
         try:
             self._last_id = self._bot.getUpdates()[-1].update_id
@@ -176,6 +174,8 @@ class LyteBot:
         except telegram.error.TelegramError as e:
             logging.critical('Failed to start bot: {} (is your Telegram token correct?)'.format(e))
             sys.exit(1)
+
+        logging.info('Started bot')
 
         try:
             while True:
