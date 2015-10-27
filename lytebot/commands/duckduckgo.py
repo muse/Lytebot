@@ -15,6 +15,6 @@ def ddg(args):
 @lytebot.command('!\w*')
 def bang(args):
     bang = args.text.split(' ')[0][1::]
-    query = ''.join(args.text.split(' ')[1::])
+    query = ' '.join(args.text.split(' ')[1::])
 
     return duckduckgo.bang_search(bang, query)
