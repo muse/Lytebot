@@ -15,10 +15,6 @@ except imgur.helpers.error.ImgurClientError as e:
     logging.error(e)
     raise CommandsDisabled('Imgur commands won\'t work. This should resolve itself over time')
 
-# thanks mvdw and techwolf12
-sub_blacklist = ['traps', 'spacedicks', '^porn$', 'submissive', 'nsfw', 'gonewild',
-                 'boob', 'yiff', 'furry']
-
 @lytebot.command('r')
 def r(args):
     arg = args.text.split(' ')[1] if len(args.text.split(' ')) > 1 else 'all'
@@ -26,8 +22,8 @@ def r(args):
 
     random_sort = random.choice(['time', 'top'])
 
-    for i in sub_blacklist:
-        if re.search(i, arg):
+    for i in lytebot.blacklisted:
+        if re.search(i.lower(), arg.lower()):
             return '@{} You speak an infinite deal of nothing'.format(user)
 
     try:

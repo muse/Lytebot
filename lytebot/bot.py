@@ -26,10 +26,12 @@ class LyteBot:
     commands = {}
     disabled = []
     previous = {}
+    blacklisted = []
 
     paths = {
         'ignored': os.path.join(config_dir, 'ignored.yml'),
         'disabled': os.path.join(config_dir, 'disabled.yml'),
+        'blacklisted': os.path.join(config_dir, 'blacklisted.yml'),
     }
 
     def __init__(self, prefix='/'):
