@@ -94,3 +94,19 @@ def unignore(args):
         return '@{} Unignored {}'.format(user, ', '.join(users))
     else:
         return '@{} Did nothing!'.format(user)
+
+@lytebot.command('blacklist')
+def blacklist(args):
+    subs = []
+    user = args.from_user.username if args.from_user.username else args.from_user.first_name
+    if args.from_user.username not in config['telegram']['owners']:
+        return '@{} You can\'t do that'.format(user)
+
+    for s in args.text.split(' ')[1::]:
+        lytebot.blacklist(s)
+        subs.append(s)
+
+    if subs:
+        return '@{} Blacklisted {}'.format(user, ', '.join(subs))
+    else:
+        return '@{} Did nothing!'.format(user)

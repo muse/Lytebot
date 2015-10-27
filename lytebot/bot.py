@@ -87,6 +87,12 @@ class LyteBot:
             if not message.startswith('!!'):
                 self._set_previous(command, update.message)
 
+    def blacklist(self, sub):
+        '''Blacklist a sub from the /r command'''
+        if sub not in self.blacklisted:
+            self.blacklisted.append(sub)
+            self.save_data(self.paths['blacklisted'], self.blacklisted)
+
     def disable(self, command):
         '''Disables a command in _all_ chats'''
         self.disabled.append(command)
