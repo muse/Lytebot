@@ -168,7 +168,7 @@ class LyteBot:
         :returns: Function or False
         '''
         for command in self.commands:
-            if re.match(r'^({0}@{1}$|{0}$|{0}\ \w*)'.format(command, self._bot.getMe()['username']), message):
+            if re.match(r'^({0}@{1}$|{0}$|{0}(@{1}|)\ \w*)'.format(command, self._bot.getMe()['username']), message):
                 return self.commands[command]
 
         return False
