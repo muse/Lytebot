@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import time
 import logging
 import telegram
 import lytebot
@@ -167,7 +168,7 @@ class LyteBot:
         :returns: Function or False
         '''
         for command in self.commands:
-            if re.match(r'^({0}$|{0}\ \w*)'.format(command), message):
+            if re.match(r'^({0}@{1}$|{0}$|{0}\ \w*)'.format(command, self._bot.getMe()['username']), message):
                 return self.commands[command]
 
         return False
@@ -181,6 +182,9 @@ class LyteBot:
             self._last_id = None
         except telegram.error.TelegramError as e:
             logging.critical('Failed to start bot: {} (is your Telegram token correct?)'.format(e))
+            sys.exit(1)
+        except Exception as e:
+            logging.warning('Failed to connect to Telegram: {}'.format(e))
             sys.exit(1)
 
         logging.info('Started bot')
