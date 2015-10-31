@@ -143,6 +143,8 @@ class LyteBot:
         user = user.replace('@', '')
         self.ignored[chat_id].remove(user)
 
+        self.save_data(self.paths['ignored'], self.ignored)
+
     def command(self, handle):
         '''
         Create a new command entry, saved in self.commands
