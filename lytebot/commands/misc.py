@@ -11,6 +11,7 @@ def repeat(args):
     chat_id = args.chat_id
 
     try:
+        lytebot.previous[chat_id]['args'].from_user = args.from_user
         return lytebot.previous[chat_id]['func'](lytebot.previous[chat_id]['args'])
     except KeyError:
         return 'I got nuthing!'
