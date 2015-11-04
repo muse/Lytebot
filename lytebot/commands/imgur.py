@@ -19,9 +19,8 @@ except imgur.helpers.error.ImgurClientError as e:
     raise CommandsDisabled('Imgur commands won\'t work. This should resolve itself over time')
 
 @lytebot.command('r')
-def r(args):
+def r(args, user):
     arg = args.text.split(' ')[1] if len(args.text.split(' ')) > 1 else 'all'
-    user = args.from_user.username if args.from_user.username else args.from_user.first_name
 
     random_sort = random.choice(['time', 'top'])
 
@@ -41,9 +40,9 @@ def r(args):
     return '@{} {}'.format(user, random.choice(items).link)
 
 @lytebot.command('kaf')
-def kaf(args):
+def kaf(args, user):
     random_sort = random.choice(['time', 'top'])
-    user = args.from_user.username if args.from_user.username else args.from_user.first_name
+
     try:
         items = imgur_client.subreddit_gallery('awwnime', sort=random_sort, window='week', page=0)
     except Exception as e:

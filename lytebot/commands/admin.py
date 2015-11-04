@@ -6,13 +6,12 @@ if 'owners' not in config['telegram']:
     raise CommandsDisabled('There is no owner set in your Lytebot config. Admin commands are disabled.')
 
 @lytebot.command('disabled')
-def disabled(args):
+def disabled(args, user):
     return ', '.join(lytebot.disabled) if lytebot.disabled else 'I got nothing!'
 
 @lytebot.command('disable', admin=True)
-def disable(args):
+def disable(args, user):
     n = []
-    user = args.from_user.username if args.from_user.username else args.from_user.first_name
 
     for s in args.text.split(' ')[1::]:
         if s == 'enable':
@@ -32,9 +31,8 @@ def disable(args):
         return '@{} Did nothing. Command already disabled.'.format(user)
 
 @lytebot.command('enable', admin=True)
-def enable(args):
+def enable(args, user):
     n = []
-    user = args.from_user.username if args.from_user.username else args.from_user.first_name
 
     for s in args.text.split(' ')[1::]:
         try:
@@ -52,16 +50,14 @@ def enable(args):
         return '@{} Did nothing. Command already enabled.'.format(user)
 
 @lytebot.command('ignored')
-def ignored(args):
-    user = args.from_user.username if args.from_user.username else args.from_user.first_name
+def ignored(args, user):
     if not args.chat_id in lytebot.ignored:
         return '@{} Ignoring no-one'.format(user)
     return '@{} Ignoring {}'.format(user, ', '.join(lytebot.ignored[args.chat_id]))
 
 @lytebot.command('ignore', admin=True)
-def ignore(args):
+def ignore(args, user):
     users = []
-    user = args.from_user.username if args.from_user.username else args.from_user.first_name
 
     for u in args.text.split(' ')[1::]:
         lytebot.ignore(args.chat_id, u)
@@ -73,9 +69,8 @@ def ignore(args):
         return '@{} Did nothing!'.format(user)
 
 @lytebot.command('unignore', admin=True)
-def unignore(args):
+def unignore(args, user):
     users = []
-    user = args.from_user.username if args.from_user.username else args.from_user.first_name
 
     for u in args.text.split(' ')[1::]:
         try:
@@ -92,7 +87,6 @@ def unignore(args):
 @lytebot.command('blacklist', admin=True)
 def blacklist(args):
     subs = []
-    user = args.from_user.username if args.from_user.username else args.from_user.first_name
 
     for s in args.text.split(' ')[1::]:
         lytebot.blacklist(s)

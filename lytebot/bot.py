@@ -63,14 +63,14 @@ class LyteBot:
         message = update.message.text[1::]
         prefix = update.message.text[0]
         command = self.get_command(message)
+        user = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
 
         if command and prefix == self.prefix and command['func'].__name__ not in self.disabled:
             # Check if the user is an owner if he calls an admin command
             if command['admin'] and update.message.from_user.username not in config['telegram']['owners']:
-                user = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
                 text = '@{} You can\'t do that!'.format(user)
             else:
-                text = command['func'](update.message)
+                text = command['func'](update.message, user)
 
             t = threading.Thread(target=self._bot.sendMessage, kwargs={
                 'chat_id': update.message.chat_id,
