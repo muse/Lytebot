@@ -4,22 +4,10 @@ import sys
 import time
 import logging
 import telegram
-import lytebot
 import yaml
 import threading
 
 from lytebot import config, config_dir
-
-# set up logging
-log_format = '%(asctime)s [%(levelname)-5.5s] %(message)s'
-logging.basicConfig(filename=os.path.join(config_dir, 'lytebot.log'),
-                    format=log_format, level=logging.INFO)
-
-# stdout logger
-console = logging.StreamHandler()
-console.setFormatter(logging.Formatter(log_format))
-
-logging.getLogger('').addHandler(console)
 
 class LyteBot:
     _last_id = None
@@ -76,10 +64,17 @@ class LyteBot:
         prefix = update.message.text[0]
         command = self.get_command(message)
 
-        if command and prefix == self.prefix and command.__name__ not in self.disabled:
+        if command and prefix == self.prefix and command['func'].__name__ not in self.disabled:
+            # Check if the user is an owner if he calls an admin command
+            if command['admin'] and update.message.from_user.username not in config['telegram']['owners']:
+                user = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
+                text = '@{} You can\'t do that!'.format(user)
+            else:
+                text = command['func'](update.message)
+
             t = threading.Thread(target=self._bot.sendMessage, kwargs={
                 'chat_id': update.message.chat_id,
-                'text': command(update.message)
+                'text': text
             })
             t.start()
 
@@ -145,20 +140,21 @@ class LyteBot:
 
         self.save_data(self.paths['ignored'], self.ignored)
 
-    def command(self, handle):
+    def command(self, handle, admin=False):
         '''
         Create a new command entry, saved in self.commands
 
         :param handle: The name for the command
+        :param admin: Is the command meant for owners only?
         :returns: Function
         '''
         def arguments(function):
             if type(function).__name__ == 'function':
-                self.commands[handle] = function
+                self.commands[handle] = {'admin': admin, 'func': function}
+                logging.info('Found command -> {}'.format(function.__name__))
             else:
                 logging.warning('{}.{} -> {}'.format(self.__class__.__name__, '__name__',
                          'Detected argument was not a function'))
-            logging.info('Found command -> {}'.format(function.__name__))
             return self.commands
         return arguments
 
@@ -170,7 +166,8 @@ class LyteBot:
         :returns: Function or False
         '''
         for command in self.commands:
-            if re.match(r'^({0}@{1}$|{0}$|{0}(@{1}|)\ \w*)'.format(command, self._bot.getMe()['username']), message):
+            pattern = r'^({0}@{1}$|{0}$|{0}(@{1}|)\ \w*)'.format(command, self._bot.getMe()['username'])
+            if re.match(pattern, message):
                 return self.commands[command]
 
         return False

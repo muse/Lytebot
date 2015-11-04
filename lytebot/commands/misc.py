@@ -4,7 +4,7 @@ from lytebot.bot import lytebot
 def start(args):
     # This needs working on, telegram automatically issues this command when
     # you talk to the bot for the first time.
-    return 'This bot searches Imgur and DuckDuckGo. It also has some other fun usages.'
+    return 'This bot searches Imgur and DuckDuckGo and has some other fun usages!'
 
 @lytebot.command('!!')
 def repeat(args):

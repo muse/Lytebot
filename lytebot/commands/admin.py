@@ -2,25 +2,24 @@ from lytebot.errors import CommandsDisabled
 from lytebot.bot import lytebot, config
 import logging
 
-if not 'owners' in config['telegram']:
+if 'owners' not in config['telegram']:
     raise CommandsDisabled('There is no owner set in your Lytebot config. Admin commands are disabled.')
 
 @lytebot.command('disabled')
 def disabled(args):
     return ', '.join(lytebot.disabled) if lytebot.disabled else 'I got nothing!'
 
-@lytebot.command('disable')
+@lytebot.command('disable', admin=True)
 def disable(args):
     n = []
     user = args.from_user.username if args.from_user.username else args.from_user.first_name
-    if args.from_user.username not in config['telegram']['owners']:
-        return '@{} You can\'t do that'.format(user)
 
     for s in args.text.split(' ')[1::]:
         if s == 'enable':
             return '@{} Nah'.format(user)
-        command = lytebot.get_command(s)
-        if not command:
+        try:
+            command = lytebot.get_command(s)['func']
+        except IndexError:
             return '@{} Command {} not found'.format(user, s)
 
         if command not in lytebot.disabled:
@@ -32,16 +31,15 @@ def disable(args):
     else:
         return '@{} Did nothing. Command already disabled.'.format(user)
 
-@lytebot.command('enable')
+@lytebot.command('enable', admin=True)
 def enable(args):
     n = []
     user = args.from_user.username if args.from_user.username else args.from_user.first_name
-    if args.from_user.username not in config['telegram']['owners']:
-        return '@{} You can\'t do that'.format(user)
 
     for s in args.text.split(' ')[1::]:
-        command = lytebot.get_command(s)
-        if not command:
+        try:
+            command = lytebot.get_command(s)['func']
+        except IndexError:
             return '@{} Command {} not found'.format(user, s)
 
         if command.__name__ in lytebot.disabled:
@@ -60,12 +58,10 @@ def ignored(args):
         return '@{} Ignoring no-one'.format(user)
     return '@{} Ignoring {}'.format(user, ', '.join(lytebot.ignored[args.chat_id]))
 
-@lytebot.command('ignore')
+@lytebot.command('ignore', admin=True)
 def ignore(args):
     users = []
     user = args.from_user.username if args.from_user.username else args.from_user.first_name
-    if args.from_user.username not in config['telegram']['owners']:
-        return '@{} You can\'t do that'.format(user)
 
     for u in args.text.split(' ')[1::]:
         lytebot.ignore(args.chat_id, u)
@@ -76,12 +72,10 @@ def ignore(args):
     else:
         return '@{} Did nothing!'.format(user)
 
-@lytebot.command('unignore')
+@lytebot.command('unignore', admin=True)
 def unignore(args):
     users = []
     user = args.from_user.username if args.from_user.username else args.from_user.first_name
-    if args.from_user.username not in config['telegram']['owners']:
-        return '@{} You can\'t do that'.format(user)
 
     for u in args.text.split(' ')[1::]:
         try:
@@ -95,18 +89,17 @@ def unignore(args):
     else:
         return '@{} Did nothing!'.format(user)
 
-@lytebot.command('blacklist')
+@lytebot.command('blacklist', admin=True)
 def blacklist(args):
     subs = []
     user = args.from_user.username if args.from_user.username else args.from_user.first_name
-    if args.from_user.username not in config['telegram']['owners']:
-        return '@{} You can\'t do that'.format(user)
 
     for s in args.text.split(' ')[1::]:
         lytebot.blacklist(s)
         subs.append(s)
 
     if subs:
+        logging.info('Sub(s) \'{}\' blacklisted by {}'.format(', '.join(subs), user))
         return '@{} Blacklisted {}'.format(user, ', '.join(subs))
     else:
         return '@{} Did nothing!'.format(user)
