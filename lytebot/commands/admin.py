@@ -7,47 +7,46 @@ if 'owners' not in config['telegram']:
 
 @lytebot.command('disabled')
 def disabled(args, user):
-    return ', '.join(lytebot.disabled) if lytebot.disabled else 'I got nothing!'
+    return '@{} '.format(user) + (', '.join(lytebot.disabled) if lytebot.disabled else 'I got nothing!')
 
 @lytebot.command('disable', admin=True)
 def disable(args, user):
-    n = []
+    commands = []
 
     for s in args.text.split(' ')[1::]:
         if s == 'enable':
             return '@{} Nah'.format(user)
-        try:
-            command = lytebot.get_command(s)['func']
-        except IndexError:
+
+        command = lytebot.get_command(s)
+        if not command:
             return '@{} Command {} not found'.format(user, s)
 
-        if command not in lytebot.disabled:
-            n.append(command)
-            lytebot.disable(command.__name__)
-            logging.info('Command \'{}\' disabled by {}'.format(command.__name__, user))
-    if n:
-        return '@{} Disabled: {}'.format(user, ', '.join([i.__name__ for i in n]))
-    else:
-        return '@{} Did nothing. Command already disabled.'.format(user)
+        if lytebot.disable(command):
+            commands.append(command['func'].__name__)
+
+    if commands:
+        logging.info('Command(s) \'{}\' disabled by {}'.format(''.join(commands), user))
+        return '@{} Disabled {}'.format(user, ', '.join(commands))
+
+    return '@{} Did nothing. Command already disabled.'.format(user)
 
 @lytebot.command('enable', admin=True)
 def enable(args, user):
-    n = []
+    commands = []
 
     for s in args.text.split(' ')[1::]:
-        try:
-            command = lytebot.get_command(s)['func']
-        except IndexError:
+        command = lytebot.get_command(s)
+        if not command:
             return '@{} Command {} not found'.format(user, s)
 
-        if command.__name__ in lytebot.disabled:
-            n.append(command.__name__)
-            lytebot.enable(command.__name__)
-            logging.info('Command \'{}\' enabled by {}'.format(command.__name__, user))
-    if n:
-        return '@{} Enabled {}'.format(user, ', '.join(n))
-    else:
-        return '@{} Did nothing. Command already enabled.'.format(user)
+        if lytebot.enable(command):
+            commands.append(command['func'].__name__)
+
+    if commands:
+        logging.info('Command(s) \'{}\' enabled by {}'.format(', '.join(commands), user))
+        return '@{} Enabled {}'.format(user, ', '.join(commands))
+
+    return '@{} Did nothing. Command(s) already enabled.'.format(user)
 
 @lytebot.command('ignored')
 def ignored(args, user):
@@ -64,9 +63,10 @@ def ignore(args, user):
         users.append(u)
 
     if users:
+        logging.info('User(s) \'{}\' ignored by {}'.format(', '.join(users), user))
         return '@{} Ignored {}'.format(user, ', '.join(users))
-    else:
-        return '@{} Did nothing!'.format(user)
+
+    return '@{} Did nothing!'.format(user)
 
 @lytebot.command('unignore', admin=True)
 def unignore(args, user):
@@ -81,8 +81,8 @@ def unignore(args, user):
 
     if users:
         return '@{} Unignored {}'.format(user, ', '.join(users))
-    else:
-        return '@{} Did nothing!'.format(user)
+
+    return '@{} Did nothing!'.format(user)
 
 @lytebot.command('blacklist', admin=True)
 def blacklist(args):
@@ -95,5 +95,5 @@ def blacklist(args):
     if subs:
         logging.info('Sub(s) \'{}\' blacklisted by {}'.format(', '.join(subs), user))
         return '@{} Blacklisted {}'.format(user, ', '.join(subs))
-    else:
-        return '@{} Did nothing!'.format(user)
+
+    return '@{} Did nothing!'.format(user)

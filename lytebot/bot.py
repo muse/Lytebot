@@ -65,7 +65,7 @@ class LyteBot:
         command = self.get_command(message)
         user = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
 
-        if command and prefix == self.prefix and command['func'].__name__ not in self.disabled:
+        if command and prefix == self.prefix and not self.is_disabled(command):
             # Check if the user is an owner if he calls an admin command
             if command['admin'] and update.message.from_user.username not in config['telegram']['owners']:
                 text = '@{} You can\'t do that!'.format(user)
@@ -91,13 +91,29 @@ class LyteBot:
 
     def disable(self, command):
         '''Disables a command in _all_ chats'''
-        self.disabled.append(command)
+        if self.is_disabled(command):
+            return False
+
+        self.disabled.append(command['func'].__name__)
         self.save_data(self.paths['disabled'], self.disabled)
+
+        return True
+
+    def is_disabled(self, command):
+        return command['func'].__name__ in self.disabled
 
     def enable(self, command):
         '''Enables a command in _all_ chats'''
-        self.disabled.remove(command)
+        if self.is_enabled(command):
+            return False
+
+        self.disabled.remove(command['func'].__name__)
         self.save_data(self.paths['disabled'], self.disabled)
+
+        return True
+
+    def is_enabled(self, command):
+        return not self.is_disabled(command)
 
     def save_data(self, file, data):
         '''
