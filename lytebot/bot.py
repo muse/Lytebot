@@ -8,6 +8,7 @@ import yaml
 import threading
 
 from lytebot import config, config_dir
+from lytebot.errors import CommandNotFound, CommandAlreadyDisabled, CommandNotDisabled
 
 class LyteBot:
     _last_id = None
@@ -83,6 +84,9 @@ class LyteBot:
             if not message.startswith('!!'):
                 self._set_previous(command, update.message)
 
+    def is_command(self, command):
+        return command['func'].__name__ in self.commands
+
     def blacklist(self, sub):
         '''Blacklist a sub from the /r command'''
         if sub not in self.blacklisted:
@@ -92,12 +96,13 @@ class LyteBot:
     def disable(self, command):
         '''Disables a command in _all_ chats'''
         if self.is_disabled(command):
-            return False
+            raise CommandAlreadyDisabled('Command {} already disabled'.format(command['func'].__name__))
+
+        if not self.is_command(command):
+            raise CommandNotFound('Command {} doesn\'t exist'.format(command['func'].__name__))
 
         self.disabled.append(command['func'].__name__)
         self.save_data(self.paths['disabled'], self.disabled)
-
-        return True
 
     def is_disabled(self, command):
         return command['func'].__name__ in self.disabled
@@ -105,12 +110,13 @@ class LyteBot:
     def enable(self, command):
         '''Enables a command in _all_ chats'''
         if self.is_enabled(command):
-            return False
+            raise CommandNotDisabled('Command {} isn\'t disabled'.format(command['func'].__name__))
+
+        if not self.is_command(command):
+            raise CommandNotFound('Command {} doesn\'t exist'.format(command['func'].__name__))
 
         self.disabled.remove(command['func'].__name__)
         self.save_data(self.paths['disabled'], self.disabled)
-
-        return True
 
     def is_enabled(self, command):
         return not self.is_disabled(command)

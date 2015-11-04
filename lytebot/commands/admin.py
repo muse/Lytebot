@@ -21,7 +21,11 @@ def disable(args, user):
         if not command:
             return '@{} Command {} not found'.format(user, s)
 
-        if lytebot.disable(command):
+        try:
+            lytebot.disable(command)
+        except Exception as e:
+            return '@{} {}'.format(user, e)
+        else:
             commands.append(command['func'].__name__)
 
     if commands:
@@ -39,7 +43,11 @@ def enable(args, user):
         if not command:
             return '@{} Command {} not found'.format(user, s)
 
-        if lytebot.enable(command):
+        try:
+            lytebot.enable(command)
+        except Exception as e:
+            return '@{} {}'.format(user, e)
+        else:
             commands.append(command['func'].__name__)
 
     if commands:
