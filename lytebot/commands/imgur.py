@@ -10,7 +10,7 @@ try:
     imgur_client = imgur.ImgurClient(config['imgur']['id'], config['imgur']['secret'])
 except KeyError as e:
     raise CommandsDisabled('Missing imgur[{}] in configuration file. Disabling imgur commands'.format(e) +
-                           ' (see config.json.example for an example)')
+                           ' (see config.example.yml for an example)')
 except Exception as e:
     raise CommandsDisabled(e)
 except imgur.helpers.error.ImgurClientError as e:

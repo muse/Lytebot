@@ -1,0 +1,8 @@
+telegram:
+    owners:
+        - owner1
+        - owner2
+    token: <TOKEN>
+imgur:
+    id: <ID>
+    secret: <SECRET>

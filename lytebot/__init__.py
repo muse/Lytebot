@@ -1,6 +1,6 @@
 import os
 import sys
-import json
+import yaml
 import logging
 import lytebot
 
@@ -26,10 +26,10 @@ if not os.path.isdir(config_dir):
         pass
 
 try:
-    with open(os.path.join(config_dir, 'config.json'), 'r') as f:
-        config = json.load(f)
+    with open(os.path.join(config_dir, 'config.yml'), 'r') as f:
+        config = yaml.load(f.read())
         if 'owners' in config['telegram'] and config['telegram']['owners']:
             logging.info('Found owners: {}'.format(', '.join(config['telegram']['owners'])))
 except FileNotFoundError:
-    logging.critical('Configuration file was not found. Does \'{}\' exist?'.format(os.path.join(config_dir, 'config.json')))
+    logging.critical('Configuration file was not found. Does \'{}\' exist?'.format(os.path.join(config_dir, 'config.yml')))
     sys.exit(1)
