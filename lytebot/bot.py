@@ -82,7 +82,7 @@ class LyteBot:
             self._last_id = update.update_id + 1
 
             if not message.startswith('!!'):
-                self._set_previous(command, update.message)
+                self._set_previous(command['func'], update.message)
 
     def is_command(self, command):
         return command['func'].__name__ in self.commands

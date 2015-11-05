@@ -12,7 +12,7 @@ def repeat(args, user):
 
     try:
         lytebot.previous[chat_id]['args'].from_user = args.from_user
-        return lytebot.previous[chat_id]['func'](lytebot.previous[chat_id]['args'])
+        return lytebot.previous[chat_id]['func'](lytebot.previous[chat_id]['args'], user)
     except KeyError:
         return '@{} I got nuthing!'.format(user)
 
