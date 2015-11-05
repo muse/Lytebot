@@ -13,10 +13,9 @@ except KeyError as e:
                            ' (see config.json.example for an example)')
 except Exception as e:
     raise CommandsDisabled(e)
-
 except imgur.helpers.error.ImgurClientError as e:
     logging.error(e)
-    raise CommandsDisabled('Imgur commands won\'t work. This should resolve itself over time')
+    raise CommandsDisabled('Imgur commands disabled. This should resolve itself over time')
 
 @lytebot.command('r')
 def r(args, user):

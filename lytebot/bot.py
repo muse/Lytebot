@@ -188,11 +188,16 @@ class LyteBot:
         :returns: Function or False
         '''
         for command in self.commands:
-            pattern = r'^({0}@{1}$|{0}$|{0}(@{1}|)\ \w*)'.format(command, self._bot.getMe()['username'])
+            try:
+                pattern = r'^({0}@{1}$|{0}$|{0}(@{1}|)\ \w*)'.format(command, self._bot.getMe()['username'])
+            except Exception as e:
+                logging.warning(e)
+                return None
+
             if re.match(pattern, message):
                 return self.commands[command]
 
-        return False
+        return None
 
     def run(self):
         '''Start listening for commands'''
