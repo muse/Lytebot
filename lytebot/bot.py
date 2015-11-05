@@ -64,7 +64,7 @@ class LyteBot:
         message = update.message.text[1::]
         prefix = update.message.text[0]
         command = self.get_command(message)
-        user = update.message.from_user.username if update.message.from_user.username else update.message.from_user.first_name
+        user = update.message.from_user.username or update.message.from_user.first_name
 
         if command and prefix == self.prefix and not self.is_disabled(command):
             # Check if the user is an owner if he calls an admin command
