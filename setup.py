@@ -3,17 +3,20 @@
 
 from distutils.core import setup
 
+with open('README.md') as f:
+    long_description = f.read()
+
 setup(
-    name = 'lytebot',
-    version = '0.0.1',
+    name = 'Lytebot',
+    version = '1.0.0',
     author = 'soud',
     author_email = 'soud@protonmail.com',
-    description = 'A practical telegram bot.',
+    description = 'Lytebot is a telegram bot existing of some convenient and fun functionalities.',
     license = 'MIT',
     keywords = 'telegram bot',
-    url = 'https://github.com/Imakethings/Lytebot',
+    url = 'https://github.com/muse/Lytebot',
     packages = ['lytebot', 'lytebot.models', 'lytebot.commands'],
-    long_description = open('README.md').read(),
+    long_description = long_description,
     classifiers = [
         'Development Status :: 6 - Mature',
         'Environment :: Console',
