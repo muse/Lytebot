@@ -1,6 +1,6 @@
-from lytebot.errors import CommandsDisabled
-from lytebot.bot import lytebot, config
 import logging
+import lytebot.errors
+from lytebot.bot import lytebot, config
 
 if 'owners' not in config['telegram']:
     raise CommandsDisabled('There is no owner set in your Lytebot config. Admin commands are disabled.')
@@ -23,7 +23,7 @@ def disable(args, user):
 
         try:
             lytebot.disable(command)
-        except Exception as e:
+        except CommandError as e:
             return '@{} {}'.format(user, e)
         else:
             commands.append(command['func'].__name__)
@@ -45,7 +45,7 @@ def enable(args, user):
 
         try:
             lytebot.enable(command)
-        except Exception as e:
+        except CommandError as e:
             return '@{} {}'.format(user, e)
         else:
             commands.append(command['func'].__name__)
@@ -83,9 +83,10 @@ def unignore(args, user):
     for u in args.text.split(' ')[1::]:
         try:
             lytebot.unignore(args.chat_id, u)
-            users.append(u)
         except Exception:
             return "@{} User {} isn't being ignored".format(user, u)
+        else:
+            users.append(u)
 
     if users:
         return '@{} Unignored {}'.format(user, ', '.join(users))

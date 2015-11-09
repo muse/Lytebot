@@ -8,16 +8,9 @@ import yaml
 import threading
 
 from lytebot import config, config_dir
-from lytebot.errors import CommandNotFound, CommandAlreadyDisabled, CommandNotDisabled
+from lytebot.errors import CommandError
 
 class LyteBot:
-    _last_id = None
-    ignored = {}
-    commands = {}
-    disabled = []
-    previous = {}
-    blacklisted = []
-
     paths = {
         'ignored': os.path.join(config_dir, 'ignored.yml'),
         'disabled': os.path.join(config_dir, 'disabled.yml'),
@@ -25,6 +18,12 @@ class LyteBot:
     }
 
     def __init__(self, prefix='/'):
+        self._last_id = None
+        self.ignored = {}
+        self.commands = {}
+        self.disabled = []
+        self.previous = {}
+        self.blacklisted = []
         self.prefix = prefix
         self._bot = telegram.Bot(token=config['telegram']['token'])
         # Disable Telegram API's logger to prevent spam
@@ -66,7 +65,7 @@ class LyteBot:
         command = self.get_command(message)
         user = update.message.from_user.username or update.message.from_user.first_name
 
-        if command and prefix == self.prefix and not self.is_disabled(command):
+        if command and prefix == self.prefix and not self._is_disabled(command):
             # Check if the user is an owner if he calls an admin command
             if command['admin'] and update.message.from_user.username not in config['telegram']['owners']:
                 text = '@{} You can\'t do that!'.format(user)
@@ -95,31 +94,31 @@ class LyteBot:
 
     def disable(self, command):
         '''Disables a command in _all_ chats'''
-        if self.is_disabled(command):
-            raise CommandAlreadyDisabled('Command {} already disabled'.format(command['func'].__name__))
+        if self._is_disabled(command):
+            raise CommandError('Command {} already disabled'.format(command['func'].__name__))
 
         if not self.is_command(command):
-            raise CommandNotFound('Command {} doesn\'t exist'.format(command['func'].__name__))
+            raise CommandError('Command {} doesn\'t exist'.format(command['func'].__name__))
 
         self.disabled.append(command['func'].__name__)
         self.save_data(self.paths['disabled'], self.disabled)
 
-    def is_disabled(self, command):
+    def _is_disabled(self, command):
         return command['func'].__name__ in self.disabled
 
     def enable(self, command):
         '''Enables a command in _all_ chats'''
-        if self.is_enabled(command):
-            raise CommandNotDisabled('Command {} isn\'t disabled'.format(command['func'].__name__))
+        if self._is_enabled(command):
+            raise CommandError('Command {} isn\'t disabled'.format(command['func'].__name__))
 
         if not self.is_command(command):
-            raise CommandNotFound('Command {} doesn\'t exist'.format(command['func'].__name__))
+            raise CommandError('Command {} doesn\'t exist'.format(command['func'].__name__))
 
         self.disabled.remove(command['func'].__name__)
         self.save_data(self.paths['disabled'], self.disabled)
 
-    def is_enabled(self, command):
-        return not self.is_disabled(command)
+    def _is_enabled(self, command):
+        return not self._is_disabled(command)
 
     def save_data(self, file, data):
         '''
@@ -168,15 +167,11 @@ class LyteBot:
 
         :param handle: The name for the command
         :param admin: Is the command meant for owners only?
-        :returns: Function
+        :returns: Decorator function
         '''
         def arguments(function):
-            if type(function).__name__ == 'function':
-                self.commands[handle] = {'admin': admin, 'func': function}
-                logging.info('Found command -> {}'.format(function.__name__))
-            else:
-                logging.warning('{}.{} -> {}'.format(self.__class__.__name__, '__name__',
-                         'Detected argument was not a function'))
+            self.commands[handle] = {'admin': admin, 'func': function}
+            logging.info('Found command -> {}'.format(function.__name__))
             return self.commands
         return arguments
 
@@ -201,7 +196,6 @@ class LyteBot:
 
     def run(self):
         '''Start listening for commands'''
-        # TODO: Make this not hacky with tries.
         try:
             self._last_id = self._bot.getUpdates()[-1].update_id
         except IndexError:
