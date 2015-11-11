@@ -18,5 +18,5 @@ $ sudo ./setup.py install
 ```
 
 This will put the executable `lytebot` in your path. To use the bot, you need
-to put the example configuration file in `~/.lytebot/config.json` with your Imgur
+to put the example configuration file in `~/.config/lytebot/config.yml` with your Imgur
 ID, Imgur secret and Telegram token.
