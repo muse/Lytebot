@@ -211,7 +211,13 @@ class LyteBot:
 
         try:
             while True:
-                for update in self._bot.getUpdates(offset=self._last_id, timeout=10):
+                try:
+                    updates = self._bot.getUpdates(offset=self._last_id, timeout=10)
+                except Exception as e:
+                    logging.warning(e)
+                    continue
+
+                for update in updates:
                     self._handle_msg(update)
         except KeyboardInterrupt:
             logging.info('Stopped bot')
