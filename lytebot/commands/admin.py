@@ -94,7 +94,7 @@ def unignore(args, user):
     return '@{} Did nothing!'.format(user)
 
 @lytebot.command('blacklist', admin=True)
-def blacklist(args):
+def blacklist(args, user):
     subs = []
 
     for s in args.text.split(' ')[1::]:
