@@ -215,7 +215,6 @@ class LyteBot:
                     updates = self._bot.getUpdates(offset=self._last_id, timeout=10)
                 except Exception as e:
                     logging.warning(e)
-                    continue
 
                 for update in updates:
                     self._handle_msg(update)
