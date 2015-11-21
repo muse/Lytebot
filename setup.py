@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from distutils.core import setup
+from setuptools import setup
 
 with open('README.md') as f:
     long_description = f.read()
@@ -17,6 +17,12 @@ setup(
     url = 'https://github.com/muse/Lytebot',
     packages = ['lytebot', 'lytebot.models', 'lytebot.commands'],
     long_description = long_description,
+    install_requires = [
+        'imgurpython==1.1.6',
+        'PyYAML==3.11',
+        'python-telegram-bot==2.8.7',
+        'beautifulsoup4==4.4.1',
+    ],
     classifiers = [
         'Development Status :: 6 - Mature',
         'Environment :: Console',
