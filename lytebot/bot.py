@@ -94,10 +94,12 @@ class LyteBot:
 
     def whitelist(self, sub):
         '''Whitelist a sub from the /r command'''
-        if sub in self.blacklisted:
-            x = self.blacklisted.index(sub)
-            self.blacklisted[x:x+1] = []
-            self.save_data(self.paths['blacklisted'], self.blacklisted)
+        try:
+            self.blacklisted.remove(sub)
+        except ValueError:
+            return
+
+        self.save_data(self.paths['blacklisted'], self.blacklisted)
 
     def disable(self, command):
         '''Disables a command in _all_ chats'''
