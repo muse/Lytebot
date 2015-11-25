@@ -106,3 +106,19 @@ def blacklist(args, user):
         return '@{} Blacklisted {}'.format(user, ', '.join(subs))
 
     return '@{} Did nothing!'.format(user)
+
+@lytebot.command('whitelist', admin=True)
+def whitelist(args, user):
+    subs = []
+
+    for s in args.text.split(' ')[1::]:
+        lytebot.whitelist(s)
+        if s in subs:
+            x = subs.index(s)
+            subs[x:x+1] = []
+
+    if subs:
+        logging.info('Sub(s) \'{}\' whitelisted by {}'.format(', '.join(subs), user))
+        return '@{} Whitelisted {}'.format(user, ', '.join(subs))
+
+    return '@{} Did nothing!'.format(user)
