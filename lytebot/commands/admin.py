@@ -113,9 +113,7 @@ def whitelist(args, user):
 
     for s in args.text.split(' ')[1::]:
         lytebot.whitelist(s)
-        if s in subs:
-            x = subs.index(s)
-            subs[x:x+1] = []
+        subs.append(s)
 
     if subs:
         logging.info('Sub(s) \'{}\' whitelisted by {}'.format(', '.join(subs), user))
