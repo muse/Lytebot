@@ -1,10 +1,23 @@
 from lytebot.bot import lytebot
 
 @lytebot.command('start')
-def start(args):
-    # This needs working on, telegram automatically issues this command when
-    # you talk to the bot for the first time.
-    return 'This bot searches Imgur and DuckDuckGo and has some other fun usages!'
+def start(args, user):
+    return '''Hi! I'm a multifunctional, convenient and fun bot. I can do all these things:\n
+/r [sub]: Random image by subreddit
+/ddg [query]: Search DuckDuckGo
+/fip: (╯°□°)╯︵ ┻━┻
+/back: ┬─┬ ノ( ゜-゜ノ)
+/disabled: Show disabled commands
+/![bang] [query]: Search DuckDuckGo by bang
+
+
+/disable [command]: Disable a command
+/enable [command]: Enable a command
+/ignore [user]: Ignore a user (don't execute commands sent by user)
+/unignore [user]: Unignore a user
+/blacklist [sub]: Blacklist subreddit from /r command
+/whitelist [sub]: Whitelist subreddit from /r command
+'''
 
 @lytebot.command('!!')
 def repeat(args, user):
