@@ -9,7 +9,7 @@ Visit https://telegram.me/Lytebot, or send a message to @Lytebot.
 ## Commands
 - /r [sub]: Random image by subreddit
 - /ddg [query]: Search DuckDuckGo
-- /fip: (╯°□°)╯︵ ┻━┻
+- /flip: (╯°□°)╯︵ ┻━┻
 - /back: ┬─┬ ノ( ゜-゜ノ)
 - /disabled: Show disabled commands
 - /![bang] [query]: Search DuckDuckGo by bang

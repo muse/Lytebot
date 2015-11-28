@@ -5,18 +5,10 @@ def start(args, user):
     return '''Hi! I'm a multifunctional, convenient and fun bot. I can do all these things:\n
 /r [sub]: Random image by subreddit
 /ddg [query]: Search DuckDuckGo
-/fip: (╯°□°)╯︵ ┻━┻
+/flip: (╯°□°)╯︵ ┻━┻
 /back: ┬─┬ ノ( ゜-゜ノ)
 /disabled: Show disabled commands
 /![bang] [query]: Search DuckDuckGo by bang
-
-
-/disable [command]: Disable a command
-/enable [command]: Enable a command
-/ignore [user]: Ignore a user (don't execute commands sent by user)
-/unignore [user]: Unignore a user
-/blacklist [sub]: Blacklist subreddit from /r command
-/whitelist [sub]: Whitelist subreddit from /r command
 '''
 
 @lytebot.command('!!')
