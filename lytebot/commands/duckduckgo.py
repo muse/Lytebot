@@ -11,7 +11,7 @@ def ddg(args, user):
 
     return '@{} {}'.format(user, duckduckgo.search(arg))
 
-@lytebot.command('!\w*')
+@lytebot.command('!\w+')
 def bang(args, user):
     bang = args.text.split(' ')[0][1::]
     query = ' '.join(args.text.split(' ')[1::])

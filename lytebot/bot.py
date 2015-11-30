@@ -189,7 +189,7 @@ class LyteBot:
         Gets command from message sent, if it contains a command
 
         :param message: Message that could contain a command
-        :returns: Function or False
+        :returns: Function or None
         '''
         for command in self.commands:
             try:
@@ -213,7 +213,7 @@ class LyteBot:
             logging.critical('Failed to start bot: {} (is your Telegram token correct?)'.format(e))
             sys.exit(1)
         except Exception as e:
-            logging.warning('Failed to connect to Telegram: {}'.format(e))
+            logging.critical('Failed to connect to Telegram: {}'.format(e))
             sys.exit(1)
 
         logging.info('Started bot')
@@ -223,7 +223,8 @@ class LyteBot:
                 try:
                     updates = self._bot.getUpdates(offset=self._last_id, timeout=10)
                 except Exception as e:
-                    logging.warning(e)
+                    logging.critical(e)
+                    sys.exit(1)
 
                 for update in updates:
                     self._handle_msg(update)
