@@ -1,4 +1,5 @@
 from lytebot.bot import lytebot
+import random
 
 @lytebot.command('start')
 def start(args, user):
@@ -23,7 +24,8 @@ def repeat(args, user):
 
 @lytebot.command('hey')
 def hey(args, user):
-    return 'Hi!'
+    greetings = ['Hey @{}, hope you are having a wonderful day!', 'Hi @{}, how are you doing?', 'Hello @{}']
+    return random.choice(greetings).format(user)
 
 @lytebot.command('flip')
 def flip(args, user):
@@ -32,3 +34,4 @@ def flip(args, user):
 @lytebot.command('back')
 def back(args, user):
     return '┬─┬ ノ( ゜-゜ノ)'
+
