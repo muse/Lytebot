@@ -191,12 +191,14 @@ class LyteBot:
         :param message: Message that could contain a command
         :returns: Function or None
         '''
+        try:
+            bot_name = self._bot.getMe()['username']
+        except Exception as e:
+            logging.warning(e)
+            return None
+
         for command in self.commands:
-            try:
-                pattern = r'^({0}@{1}$|{0}$|{0}(@{1}|)\ \w*)'.format(command, self._bot.getMe()['username'])
-            except Exception as e:
-                logging.warning(e)
-                return None
+            pattern = r'^({0}@{1}$|{0}$|{0}(@{1}|)\ \w*)'.format(command, bot_name)
 
             if re.match(pattern, message):
                 return self.commands[command]
