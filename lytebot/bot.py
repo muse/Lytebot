@@ -89,13 +89,13 @@ class LyteBot:
     def blacklist(self, sub):
         '''Blacklist a sub from the /r command'''
         if sub not in self.blacklisted:
-            self.blacklisted.append(sub)
+            self.blacklisted.append(sub.lower())
             self.save_data(self.paths['blacklisted'], self.blacklisted)
 
     def whitelist(self, sub):
         '''Whitelist a sub from the /r command'''
         try:
-            self.blacklisted.remove(sub)
+            self.blacklisted.remove(sub.lower())
         except ValueError:
             return
 
