@@ -8,6 +8,7 @@ def start(args, user):
 /ddg [query]: Search DuckDuckGo
 /flip: (╯°□°)╯︵ ┻━┻
 /back: ┬─┬ ノ( ゜-゜ノ)
+/shruggie: ¯\_(ツ)_/¯
 /disabled: Show disabled commands
 /![bang] [query]: Search DuckDuckGo by bang
 '''
@@ -34,4 +35,8 @@ def flip(args, user):
 @lytebot.command('back')
 def back(args, user):
     return '┬─┬ ノ( ゜-゜ノ)'
+
+@lytebot.command('shruggie')
+def shruggie(args, user):
+    return '¯\_(ツ)_/¯'
 
