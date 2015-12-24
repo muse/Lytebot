@@ -4,7 +4,7 @@ import logging
 
 @lytebot.command('ddg')
 def ddg(args, user):
-    arg = ''.join(args.text.split(' ')[1::])
+    arg = ' '.join(args.text.split(' ')[1::])
 
     if not arg:
         return '@{} I can\'t hear you -- I\'m using the scrambler.'.format(user)
