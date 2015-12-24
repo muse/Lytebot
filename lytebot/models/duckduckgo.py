@@ -15,7 +15,7 @@ def search(query):
     container = soup.find('div', class_='links_main')
     url = container.find('a', class_='large')
 
-    return url['href'] or 'I got nuthing!'
+    return url['href'] if url else 'I got nuthing!'
 
 def bang_search(bang, query):
     url = 'https://duckduckgo.com/html/?q={}+{}'.format(bang, urllib.parse.quote_plus(query))
