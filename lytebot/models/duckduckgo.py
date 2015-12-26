@@ -29,4 +29,9 @@ def bang_search(bang, query):
     # if it didn't redirect, the bang is invalid
     if resp.geturl().startswith('https://duckduckgo.com'):
         return 'Invalid bang: {}'.format(bang)
-    return resp.geturl() if resp.geturl() else 'What happend?'
+
+    if resp.geturl():
+        base_url = urllib.parse.urlparse(resp.geturl())
+        return search('site:{} {}'.format(base_url.netloc, query))
+
+    return 'What happend!?'
