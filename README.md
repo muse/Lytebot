@@ -31,6 +31,16 @@ Visit https://telegram.me/Lytebot, or send a message to @Lytebot.
 - PyYAML
 - python-telegram-bot
 
+## Running
+If you have Docker, Lytebot can be started with a single command:
+```bash
+$ docker run -v ~/.config/lytebot:/root/.config/lytebot lytebot
+```
+
+Alternatively, you can run Lytebot without Docker. We recommend using something
+like `supervisord`, but you can just run `lytebot &` to start Lytebot in the
+background.
+
 ## Building
 ```bash
 $ git clone https://github.com/muse/Lytebot
