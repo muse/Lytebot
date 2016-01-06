@@ -20,7 +20,7 @@ setup(
     install_requires=[
         'imgurpython==1.1.6',
         'PyYAML==3.11',
-        'python-telegram-bot==2.8.7',
+        'python-telegram-bot==3.2.0',
         'beautifulsoup4==4.4.1',
     ],
     classifiers=[
