@@ -36,6 +36,8 @@ def r(args, user):
     if not items:
         return '@{} My pet ferret can type better than you!'.format(user)
 
+    logging.info('"/r {}" from {}'.format(arg, user))
+
     return '@{} {}'.format(user, random.choice(items).link)
 
 @lytebot.command('kaf')
