@@ -1,4 +1,5 @@
 import logging
+import urllib
 import random
 import re
 import imgurpython as imgur
@@ -20,6 +21,7 @@ except imgur.helpers.error.ImgurClientError as e:
 @lytebot.command('r')
 def r(args, user):
     arg = args.text.split(' ')[1] if len(args.text.split(' ')) > 1 else 'all'
+    arg = urllib.parse.quote_plus(arg)
 
     random_sort = random.choice(['time', 'top'])
 
