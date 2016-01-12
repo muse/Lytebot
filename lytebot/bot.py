@@ -17,14 +17,14 @@ class LyteBot:
         'blacklisted': os.path.join(config_dir, 'blacklisted.yml'),
     }
 
-    def __init__(self, prefix='/'):
-        self._last_id = None
+    def __init__(self):
+        '''Initialize bot'''
+        self.prefix = '/'
         self.ignored = {}
         self.commands = {}
         self.disabled = []
         self.previous = {}
         self.blacklisted = []
-        self.prefix = prefix
         self._bot = telegram.Bot(token=config['telegram']['token'])
         # Disable Telegram API's logger to prevent spam
         self._bot.logger.disabled = True
@@ -189,9 +189,10 @@ class LyteBot:
         :param chat_id: Chat ID
         :param user: Username to ignored
         '''
-        if not chat_id in self.ignored:
+        if chat_id not in self.ignored:
             self.ignored[chat_id] = []
-        if not user in self.ignored[chat_id]:
+
+        if user not in self.ignored[chat_id]:
             # allow /ignore @username for convenience
             user = user.replace('@', '')
             self.ignored[chat_id].append(user)
@@ -247,30 +248,28 @@ class LyteBot:
 
     def run(self):
         '''Start listening for commands'''
-        try:
-            self._last_id = self._bot.getUpdates()[-1].update_id
-        except IndexError:
-            self._last_id = None
-        except telegram.error.TelegramError as e:
-            logging.critical('Failed to start bot: {} (is your Telegram token correct?)'.format(e))
-            sys.exit(1)
-        except Exception as e:
-            logging.critical('Failed to connect to Telegram: {}'.format(e))
-            sys.exit(1)
-
         logging.info('Started bot')
 
         try:
-            while True:
-                try:
-                    updates = self._bot.getUpdates(offset=self._last_id, timeout=10)
-                except Exception as e:
-                    logging.critical(e)
-                    sys.exit(1)
+            self._last_id = self._bot.getUpdates()[0].update_id
+        except IndexError:
+            self._last_id = None
 
-                for update in updates:
-                    self._handle_msg(update)
-        except KeyboardInterrupt:
-            logging.info('Stopped bot')
+        while True:
+            try:
+                updates = self._bot.getUpdates(offset=self._last_id, timeout=10)
+            except telegram.error.TelegramError as e:
+                if e.message in ("Bad Gateway", "Timed out"):
+                    sleep(1)
+                elif e.message == "Unauthorized":
+                    update_id += 1
+                else:
+                    logging.critical('Failed to start bot: {} (is your Telegram token correct?)'.format(e))
+                    sys.exit(1)
+            except URLError as e:
+                sleep(1)
+
+            for update in updates:
+                self._handle_msg(update)
 
 lytebot = LyteBot()
