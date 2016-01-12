@@ -50,7 +50,11 @@ class LyteBot:
         self.previous[args.chat_id] = {'func': func, 'args': args}
 
     def _handle_msg(self, update):
-        '''Handles all messages sent in all chats (that the bot can see)'''
+        '''
+        Handles all messages sent in all chats (that the bot can see)
+
+        :param update: Object with chat info
+        '''
         # Ignore stickers, pictures and other non-text messages
         if not update.message['text']:
             return
@@ -84,16 +88,30 @@ class LyteBot:
                 self._set_previous(command['func'], update.message)
 
     def is_command(self, command):
+        '''
+        Check if a command exists
+
+        :param command: Name to check
+        :rtype: bool
+        '''
         return command['func'].__name__ in self.commands
 
     def blacklist(self, sub):
-        '''Blacklist a sub from the /r command'''
+        '''
+        Blacklist a sub from the /r command
+
+        :param sub: Subreddit to blacklist
+        '''
         if sub not in self.blacklisted:
             self.blacklisted.append(sub.lower())
             self.save_data(self.paths['blacklisted'], self.blacklisted)
 
     def whitelist(self, sub):
-        '''Whitelist a sub from the /r command'''
+        '''
+        Whitelist a sub from the /r command
+
+        :param sub: Subreddit to whitelist
+        '''
         try:
             self.blacklisted.remove(sub.lower())
         except ValueError:
@@ -102,7 +120,12 @@ class LyteBot:
         self.save_data(self.paths['blacklisted'], self.blacklisted)
 
     def disable(self, command):
-        '''Disables a command in _all_ chats'''
+        '''
+        Disables a command in _all_ chats
+
+        :param command: Command to disables
+        :raises: CommandError
+        '''
         if self._is_disabled(command):
             raise CommandError('Command {} already disabled'.format(command['func'].__name__))
 
@@ -113,10 +136,21 @@ class LyteBot:
         self.save_data(self.paths['disabled'], self.disabled)
 
     def _is_disabled(self, command):
+        '''
+        Check if command is disabled
+
+        :param command: Command to check
+        :rtype: bool
+        '''
         return command['func'].__name__ in self.disabled
 
     def enable(self, command):
-        '''Enables a command in _all_ chats'''
+        '''
+        Enables a command in _all_ chats
+
+        :param command: Command to enable
+        :raises: CommandError
+        '''
         if self._is_enabled(command):
             raise CommandError('Command {} isn\'t disabled'.format(command['func'].__name__))
 
@@ -127,6 +161,12 @@ class LyteBot:
         self.save_data(self.paths['disabled'], self.disabled)
 
     def _is_enabled(self, command):
+        '''
+        Check if command is enabled
+
+        :param command: Command to check
+        :rtype: bool
+        '''
         return not self._is_disabled(command)
 
     def save_data(self, file, data):
@@ -176,7 +216,7 @@ class LyteBot:
 
         :param handle: The name for the command
         :param admin: Is the command meant for owners only?
-        :returns: Decorator function
+        :rtype: function
         '''
         def arguments(function):
             self.commands[handle] = {'admin': admin, 'func': function}
@@ -189,7 +229,7 @@ class LyteBot:
         Gets command from message sent, if it contains a command
 
         :param message: Message that could contain a command
-        :returns: Function or None
+        :rtype: function or None
         '''
         try:
             bot_name = self._bot.getMe()['username']
