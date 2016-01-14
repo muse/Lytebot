@@ -187,7 +187,7 @@ class LyteBot:
         Ignores a user in a chat
 
         :param chat_id: Chat ID
-        :param user: Username to ignored
+        :param user: Username to ignore
         '''
         if chat_id not in self.ignored:
             self.ignored[chat_id] = []
@@ -204,7 +204,7 @@ class LyteBot:
         Unignores a user in a chat
 
         :param chat_id: Chat ID
-        :param user: Username to ignored
+        :param user: Username to unignore
         '''
         user = user.replace('@', '')
         self.ignored[chat_id].remove(user)
@@ -260,14 +260,16 @@ class LyteBot:
                 updates = self._bot.getUpdates(offset=self._last_id, timeout=10)
             except telegram.error.TelegramError as e:
                 if e.message in ("Bad Gateway", "Timed out"):
-                    sleep(1)
+                    time.sleep(1)
+                    continue
                 elif e.message == "Unauthorized":
                     update_id += 1
                 else:
                     logging.critical('Failed to start bot: {} (is your Telegram token correct?)'.format(e))
                     sys.exit(1)
             except URLError as e:
-                sleep(1)
+                time.sleep(1)
+                continue
 
             for update in updates:
                 self._handle_msg(update)
