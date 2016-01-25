@@ -7,6 +7,7 @@ import telegram
 import yaml
 import threading
 
+from urllib.error import URLError
 from lytebot import config, config_dir
 from lytebot.errors import CommandError
 
