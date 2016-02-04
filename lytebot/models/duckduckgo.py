@@ -12,8 +12,8 @@ def search(query):
         return 'Something went wrong!!'
 
     soup = BeautifulSoup(resp, 'html.parser')
-    container = soup.find('div', class_='links_main')
-    url = container.find('a', class_='large')
+    first = soup(attrs={'class': 'results_links results_links_deep web-result'})[0]
+    url = first.find('a', class_='large')
 
     return url['href'] if url else 'I got nuthing!'
 
