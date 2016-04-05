@@ -41,15 +41,3 @@ def r(args, user):
     logging.info('"/r {}" from {}'.format(arg, user))
 
     return '@{} {}'.format(user, random.choice(items).link)
-
-@lytebot.command('kaf')
-def kaf(args, user):
-    random_sort = random.choice(['time', 'top'])
-
-    try:
-        items = imgur_client.subreddit_gallery('awwnime', sort=random_sort, window='week', page=0)
-    except Exception as e:
-        logging.warning('ImgurClient: {}'.format(e))
-        return '@{} I can\'t help you at this time. Try again later.'.format(user)
-
-    return '@{} {}'.format(user, random.choice(items).link)
