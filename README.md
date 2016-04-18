@@ -11,7 +11,7 @@ Visit https://telegram.me/Lytebot, or send a message to @Lytebot.
 - /ddg [query]: Search DuckDuckGo
 - /flip: (╯°□°)╯︵ ┻━┻
 - /back: ┬─┬ ノ( ゜-゜ノ)
-- /shruggie: ¯\\_(ツ)_/¯
+- /shruggie: ¯\\\_(ツ)_/¯
 - /disabled: Show disabled commands
 - /![bang] [query]: Search DuckDuckGo by bang. Example: `/!yt never gonna give you up` (see https://duckduckgo.com/bang for a all available bangs)
 
