@@ -57,7 +57,7 @@ class LyteBot:
         :param update: Object with chat info
         '''
         # Ignore stickers, pictures and other non-text messages
-        if not update.message['text']:
+        if not update['message'] or not update.message['text']:
             return
 
         # Is the user who sent the message ignored?
@@ -253,7 +253,7 @@ class LyteBot:
 
         try:
             self._last_id = self._bot.getUpdates()[0].update_id
-        except IndexError:
+        except (IndexError, KeyError):
             self._last_id = None
 
         while True:
