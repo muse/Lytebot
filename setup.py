@@ -9,7 +9,7 @@ with open('README.md') as f:
 setup(
     name='Lytebot',
     version='1.0.0',
-    author='soud',
+    author='soud, the edgyest man alive',
     author_email='soud@protonmail.com',
     description='Lytebot is a telegram bot existing of some convenient and fun functionalities.',
     license='MIT',
@@ -18,6 +18,7 @@ setup(
     packages=['lytebot', 'lytebot.models', 'lytebot.commands'],
     long_description=long_description,
     install_requires=[
+        'urbandict>=0',
         'imgurpython==1.1.6',
         'PyYAML==3.11',
         'python-telegram-bot==3.2.0',

@@ -33,8 +33,8 @@ def disable(args, user):
         return '@{} Disabled {}'.format(user, ', '.join(commands))
 
     return '@{} Did nothing. Command already disabled.'.format(user)
-
-@lytebot.command('enable', admin=True)
+#freeeeeeeeeedoooooooom
+@lytebot.command('enable', admin=False)
 def enable(args, user):
     commands = []
 
