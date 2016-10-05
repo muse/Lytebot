@@ -55,7 +55,7 @@ def ud(ex, user):
   try:
     dict = udc.define(args[1])
   except Exeption as e:
-    logging.info('DuckDuckGo: {}'.format(e))
+    logging.info('urban dictinary : {}'.format(e))
     return '@{} Couldn\'t find that shit man. sry'
 
   return '@{} \n @{} \n @{}'.format(user, dict[0].def, dict[0].example)
