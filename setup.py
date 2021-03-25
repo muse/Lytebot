@@ -19,7 +19,7 @@ setup(
     long_description=long_description,
     install_requires=[
         'imgurpython==1.1.6',
-        'PyYAML==3.11',
+        'PyYAML==5.4',
         'python-telegram-bot==4.3.4',
         'beautifulsoup4==4.4.1',
     ],
